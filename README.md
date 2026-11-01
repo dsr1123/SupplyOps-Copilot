@@ -1,4 +1,3 @@
-
 # SupplyOps Copilot
 
 An engineering practice project for building a production-oriented **AI + Operations Research decision system**.
@@ -123,10 +122,11 @@ The first version will deliberately remain small.
 
 ### Data scale
 
-- 10 warehouses
+- 10 regional warehouses
 - 10 SKUs
-- 20–30 customer orders
-- Several purchase orders
+- ~150 customer orders within the planning horizon
+- ~30–40 inter-warehouse transfer lanes
+- 20–30 inbound purchase orders
 - Synthetic business data
 
 ### Exception scenarios
@@ -139,29 +139,21 @@ The MVP will initially support:
 
 ### Optimization decisions
 
-The optimization model may determine:
+Each order is fulfilled by its regional warehouse; cross-region supply happens only through inter-warehouse transfers. The model (a small fixed-charge network-flow MIP) determines:
 
-- Order-to-warehouse allocation
-- Inter-warehouse inventory transfers
-- Delayed quantities
+- Inter-warehouse transfers and which lanes to activate
 - Emergency procurement quantities
+- Delayed quantities per order
 
-Example objective:
+Objective:
 
-\[
-\min
-(
-C_{\text{shipping}}
-+
-C_{\text{transfer}}
-+
-C_{\text{expedite}}
-+
-C_{\text{late}}
-)
-\]
+$$
+\min \; C_{\text{transfer}} + C_{\text{lane}} + C_{\text{expedite}} + C_{\text{delay}}
+$$
 
-subject to inventory, transportation capacity, demand, and service-level constraints.
+subject to inventory balance, shared lane capacity, expedite capacity, and VIP service-level constraints.
+
+See [OPT_MODEL.md](OPT_MODEL.md) for the full formulation and data specification.
 
 ---
 
@@ -171,22 +163,25 @@ The planned stack includes:
 
 ### Core
 
-- Python
+- Python 3.9
 - Pandas
 - OR-Tools
 - SQLite
+- pytest
 
 ### Service Layer
 
 - FastAPI
+- Pydantic
 - HTTP / REST APIs
 - JSON
 
 ### AI
 
-- LLM API / MaaS
-- Tool Calling
+- LLM API / MaaS (OpenAI-compatible; DeepSeek / Qwen / GLM)
 - Structured Output
+- Tool Calling
+- Hand-written agent loop (no agent framework)
 
 ### Engineering
 
@@ -264,28 +259,14 @@ This repository is also a practical engineering course.
 
 Instead of learning infrastructure concepts independently, each concept will be introduced when the project needs it.
 
-The planned learning path is:
+The planned learning path (details in [STUDY_PLAN.md](STUDY_PLAN.md)):
 
 ```text
-Python Program
-      ↓
-Linux Process
-      ↓
-Networking
-      ↓
-HTTP / API
-      ↓
-FastAPI Service
-      ↓
-Docker Container
-      ↓
-LLM Tool Calling
-      ↓
-Agent Workflow
-      ↓
-Reliability
-      ↓
-Deployment
+Part A  Local OR engine         data + model + validator + tests
+          ↓
+Part B  From program to service Linux → networking → HTTP/API → Docker → Mock ERP
+          ↓
+Part C  From service to agent   LLM API → tool calling → workflow → reliability → evaluation
 ```
 
 Topics include:
@@ -328,12 +309,22 @@ Topics include:
 - volume
 - environment variables
 
+### LLM & Agents
+
+- structured output and schema validation
+- tool calling and the agent loop
+- workflow vs. agent
+- human-in-the-loop approval
+- prompt injection from untrusted input
+- agent evaluation
+
 ### Production Reliability
 
 - timeout
 - retry
 - fallback
 - logging
+- tracing
 - health check
 - rollback
 
@@ -341,90 +332,56 @@ Topics include:
 
 ## 8. Development Roadmap
 
-### Stage 0 — Project Setup
+Lesson numbers follow [STUDY_PLAN.md](STUDY_PLAN.md). Detailed progress is tracked in [COURSE_STATE.md](COURSE_STATE.md).
 
-- [ ] Initialize Git repository
-- [ ] Create project structure
-- [ ] Prepare development environment
+### Part A — Local OR Engine
 
-### Stage 1 — Local Optimizer
+- [X] L0 Initialize Git repository and project structure
+- [ ] L0 Prepare development environment (Python 3.9, venv)
+- [ ] L1 Build synthetic supply-chain data (10 warehouses × 10 SKUs)
+- [ ] L1 Implement optimization model, baselines, and validator
+- [ ] L1 Unit tests with pytest
 
-- [ ] Build synthetic supply-chain data
-- [ ] Implement optimization model
-- [ ] Validate optimization results
+### Part B — From Program to Service
 
-### Stage 2 — Optimization Service
+- [ ] L2 Run the optimizer on a Linux server over SSH
+- [ ] L3 Understand IP, ports, and HTTP; call an LLM API with curl
+- [ ] L4 FastAPI optimization service (`/health`, `/optimize`)
+- [ ] L5 Containerize the optimization service with Docker
+- [ ] L6 Mock ERP service (SQLite) + Docker Compose
 
-- [ ] Build FastAPI service
-- [ ] Implement `/optimize`
-- [ ] Implement `/health`
+### Part C — From Service to Agent
 
-### Stage 3 — Linux & Networking
-
-- [ ] Run service on Linux server
-- [ ] Access service remotely
-- [ ] Understand process, IP, and port behavior
-
-### Stage 4 — Docker
-
-- [ ] Create Dockerfile
-- [ ] Containerize optimization service
-- [ ] Configure port mapping and environment variables
-
-### Stage 5 — LLM Agent
-
-- [ ] Parse supply-chain exception messages
-- [ ] Implement tool calling
-- [ ] Connect Agent to business data
-- [ ] Connect Agent to optimization service
-
-### Stage 6 — Reliability
-
-- [ ] Timeout
-- [ ] Retry
-- [ ] Solver fallback
-- [ ] Logging
-- [ ] Validation
-- [ ] Human approval
-
-### Stage 7 — Final Demo
-
-- [ ] End-to-end disruption scenario
-- [ ] Evaluation cases
-- [ ] Architecture diagram
-- [ ] Demo video
-- [ ] Final documentation
+- [ ] L7 Parse supplier messages into structured events
+- [ ] L8 Tool calling and a hand-written agent loop
+- [ ] L9 End-to-end workflow with human approval
+- [ ] L10 Timeout, retry, fallback, logging, tracing
+- [ ] L11 Evaluation, deployment, and final demo
 
 ---
 
 ## 9. Project Structure
 
-Planned repository structure:
-
 ```text
 SupplyOps-Copilot/
-│
 ├── README.md
-├── COURSE_STATE.md
-├── .gitignore
+├── STUDY_PLAN.md            # course outline
+├── COURSE_STATE.md          # course progress
+├── OPT_MODEL.md             # optimization model & data spec
+├── requirements.txt
+├── .env.example
 │
-├── notes/
-│   ├── 01_linux.md
-│   ├── 02_network.md
-│   ├── 03_api.md
-│   └── 04_docker.md
-│
-├── data/
-│
-├── optimizer/
-│
-├── api/
-│
-├── agent/
-│
+├── data/                    # synthetic CSV data + generator
+│   ├── scenarios/           # disruption scenarios
+│   └── eval/                # LLM / agent evaluation data
+├── optimizer/               # OR engine (pure Python, no HTTP)
+├── services/
+│   ├── optimizer_api/       # Optimization Service (FastAPI)
+│   └── erp/                 # Mock ERP Service (FastAPI + SQLite)
+├── agent/                   # LLM client, agent loop, workflow
 ├── tests/
-│
-└── docker/
+├── docker/                  # Dockerfiles, compose.yml
+└── notes/                   # per-lesson study notes
 ```
 
 ---
@@ -461,10 +418,10 @@ Every engineering concept introduced in this project should solve a concrete pro
 
 ## Current Status
 
-**Stage 0 — Project Setup**
+**Lesson 0 — Project Setup, Git & Dev Environment**
 
-The business problem and high-level architecture have been defined.
+The business problem, optimization model, and course plan have been defined.
 
 Next step:
 
-> Initialize the repository and begin building the first local optimization program.
+> Finish the development environment setup, then build the local OR engine (Lesson 1).

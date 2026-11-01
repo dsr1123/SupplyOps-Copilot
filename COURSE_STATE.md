@@ -1,459 +1,174 @@
-
 # SupplyOps Engineering Course State
+
+> Single source of truth for course progress.
+> Course outline: `STUDY_PLAN.md`. OR model & data spec: `OPT_MODEL.md`.
 
 ## Current Stage
 
-**Lesson 0 — Project Setup**
+**Lesson 0 — Project Setup, Git & Dev Environment** (IN PROGRESS)
 
-Current objective:
-
-> Build the project foundation and prepare the local development workflow before starting engineering lessons.
+Next: **Lesson 1 — Local OR Engine**
 
 ---
 
-## Project Goal
+## Progress Overview
 
-Build a small but complete production-oriented **AI + Operations Research decision system** for supply-chain exception recovery.
+| Lesson | Topic                                | Status      |
+| ------ | ------------------------------------ | ----------- |
+| 0      | Project Setup, Git & Dev Environment | IN PROGRESS |
+| 1      | Local OR Engine                      | NOT STARTED |
+| 2      | Program, Process, Linux & SSH        | NOT STARTED |
+| 3      | Networking & HTTP                    | NOT STARTED |
+| 4      | FastAPI Optimization Service         | NOT STARTED |
+| 5      | Docker                               | NOT STARTED |
+| 6      | Mock ERP & Docker Compose            | NOT STARTED |
+| 7      | LLM API & Structured Output          | NOT STARTED |
+| 8      | Tool Calling & Agent Loop            | NOT STARTED |
+| 9      | End-to-End Workflow & Human Approval | NOT STARTED |
+| 10     | Reliability & Observability          | NOT STARTED |
+| 11     | Evaluation, Deployment & Demo        | NOT STARTED |
+| Bonus  | Kubernetes                           | NOT STARTED |
 
-Target workflow:
+Implementation status:
 
 ```text
-Supply Chain Exception
-        ↓
-LLM Event Understanding
-        ↓
-Business Data Retrieval
-        ↓
-Optimization Solver
-        ↓
-Solution Validation
-        ↓
-Human Approval
-        ↓
-Execution / Update
-```
-
-The project should simultaneously demonstrate:
-
-- Operations Research modeling and optimization
-- AI / Agent engineering
-- API and service design
-- Linux and deployment fundamentals
-- Reliability engineering
-- Business-oriented system thinking
-
----
-
-## Current Architecture
-
-Planned architecture:
-
-```text
-Local Windows Development Environment
-        │
-        │ Git / SSH
-        ▼
-Linux Server
-        │
-        ├── Optimization Service
-        │       └── OR-Tools
-        │
-        ├── Mock ERP / Business Data
-        │
-        └── SupplyOps Agent
-                │
-                ▼
-             MaaS LLM
-```
-
-Current implementation status:
-
-```text
-Git repository        : TODO
-Local optimizer       : TODO
-Linux environment     : TODO
-FastAPI               : TODO
-Docker                : TODO
-LLM integration       : TODO
-Agent                 : TODO
-Reliability mechanisms: TODO
-Final deployment      : TODO
+Git repository          : DONE (GitHub remote connected)
+Dev environment         : TODO
+Local OR engine         : TODO
+Linux deployment        : TODO
+Optimization service    : TODO
+Docker                  : TODO
+Mock ERP                : TODO
+LLM integration         : TODO
+Agent loop / workflow   : TODO
+Reliability             : TODO
+Evaluation & deployment : TODO
 ```
 
 ---
 
-# Course Roadmap
+## Lesson 0 — Tasks
 
-## Lesson 0 — Project Setup
+- [X] Create local project directory
+- [X] Initialize Git repository
+- [X] Add README.md, COURSE_STATE.md, .gitignore
+- [X] Make first Git commit
+- [X] Connect remote GitHub repository
+- [X] Unify README / STUDY_PLAN / COURSE_STATE / OPT_MODEL
+- [X] Create directory structure (incl. `services/optimizer_api`, `services/erp`)
+- [x] Add `.gitkeep` so empty directories are tracked by Git
+- [x] Python version decision: keep 3.9.13 (works; avoid upgrade risk)
+- [x] Create `.venv`, add `requirements.txt`
+- [x] Add `.env.example`
+- [ ] Commit and push all documents
+- [ ] First branch → PR → merge cycle
+- [ ] Write `notes/00_git.md`
 
-Status: **IN PROGRESS**
-
-Topics:
-
-- Git repository
-- Project structure
-- README
-- COURSE_STATE
-- `.gitignore`
-- Local development environment
-
-Tasks:
-
-- [ ] Create local project directory
-- [ ] Initialize Git repository
-- [ ] Add README.md
-- [ ] Add COURSE_STATE.md
-- [ ] Add .gitignore
-- [ ] Create initial project folders
-- [ ] Make first Git commit
-- [ ] Connect remote Git repository
+Completion check: explain what `git add` / `git commit` / `git push` each change.
 
 ---
 
-## Lesson 1 — Program, Process, Server and SSH
+## Knowledge Tracking
 
-Status: **NOT STARTED**
+### Background (already strong)
 
-Topics:
+- Operations Research modeling (MIP, network flow)
+- Data processing / analysis in Python
 
-- program vs process
-- process ID (PID)
-- foreground process
-- background process
-- server
-- host
-- local machine vs remote machine
-- SSH
-- environment variables
-- PATH
-
-Hands-on goals:
-
-- Run a Python program locally
-- SSH into Linux
-- Run the same program remotely
-- Inspect the running process
-- Stop and restart the process
-
-Commands expected:
-
-```bash
-pwd
-ls
-cd
-which
-env
-export
-ps
-top
-htop
-kill
-ssh
-```
-
----
-
-## Lesson 2 — Networking Fundamentals
-
-Status: **NOT STARTED**
-
-Topics:
-
-- IP address
-- port
-- localhost
-- 127.0.0.1
-- 0.0.0.0
-- TCP
-- DNS
-- client / server
-- bind
-- listen
-
-Hands-on goals:
-
-- Start a simple network service
-- Inspect listening ports
-- Access a Linux service from another machine
-- Diagnose a connectivity failure
-
-Commands expected:
-
-```bash
-curl
-ping
-ss
-ip
-```
-
----
-
-## Lesson 3 — HTTP and APIs
-
-Status: **NOT STARTED**
-
-Topics:
-
-- HTTP
-- request
-- response
-- endpoint
-- GET
-- POST
-- JSON
-- HTTP status codes
-- REST API
-
-Hands-on goals:
-
-- Build the first FastAPI service
-- Create `/health`
-- Create `/optimize`
-- Call the API using curl and Python
-
----
-
-## Lesson 4 — Docker
-
-Status: **NOT STARTED**
-
-Topics:
-
-- image
-- container
-- Dockerfile
-- host
-- container filesystem
-- port mapping
-- environment variables
-- volume
-
-Hands-on goals:
-
-- Containerize the optimization API
-- Build Docker image
-- Run container
-- Access containerized service from host
-
----
-
-## Lesson 5 — LLM API and Tool Calling
-
-Status: **NOT STARTED**
-
-Topics:
-
-- MaaS
-- LLM API
-- structured output
-- tool calling
-- Agent loop
-- tool execution
-- state
-
-Hands-on goals:
-
-- Call an LLM through API
-- Parse a supplier disruption message
-- Implement business tools
-- Let the LLM call optimization tools
-
----
-
-## Lesson 6 — Reliability Engineering
-
-Status: **NOT STARTED**
-
-Topics:
-
-- timeout
-- retry
-- fallback
-- exponential backoff
-- logging
-- request ID
-- validation
-- graceful degradation
-
-Hands-on goals:
-
-- Force solver timeout
-- Implement heuristic fallback
-- Simulate LLM API failure
-- Add structured logs
-- Add validation before execution
-
----
-
-## Lesson 7 — Deployment and Final Demo
-
-Status: **NOT STARTED**
-
-Topics:
-
-- service deployment
-- health checks
-- Docker Compose
-- service-to-service communication
-- configuration
-- basic production architecture
-
-Hands-on goals:
-
-- Deploy complete SupplyOps system
-- Run end-to-end supply disruption scenario
-- Demonstrate failure handling
-- Prepare final GitHub documentation
-
----
-
-# Knowledge Tracking
-
-## Comfortable
-
-Currently none.
-
----
-
-## Learning
+### Learning
 
 - Git project organization
 - Local vs remote development workflow
 
----
+### Not Yet Covered
 
-## Not Yet Covered
-
-- Linux process management
-- Networking
-- HTTP
+- Python packaging, virtual environments, pytest
+- Linux processes, permissions, SSH
+- Networking, HTTP
 - FastAPI
-- Docker
-- LLM tool calling
-- Agent workflow
-- Reliability
-- Deployment
+- Docker, Docker Compose
+- LLM API, structured output
+- Tool calling, agent loop, workflow vs agent
+- Reliability, observability
+- Agent evaluation
 - Kubernetes basics
 
 ---
 
-# Engineering Vocabulary
+## Engineering Vocabulary
 
-| Term           | Understanding                          | Status      |
-| -------------- | -------------------------------------- | ----------- |
-| Git repository | Version-controlled project directory   | Learning    |
-| Program        | Code stored on disk                    | Not covered |
-| Process        | Running instance of a program          | Not covered |
-| Server         | Machine or program providing a service | Not covered |
-| Host           | Machine running processes/containers   | Not covered |
-| SSH            | Remote shell protocol                  | Not covered |
-| IP             | Network address                        | Not covered |
-| Port           | Network endpoint number                | Not covered |
-| API            | Interface between software systems     | Not covered |
-| Container      | Isolated application runtime           | Not covered |
-| Timeout        | Maximum waiting time                   | Not covered |
-| Retry          | Reattempt after failure                | Not covered |
-| Fallback       | Backup strategy after failure          | Not covered |
-
----
-
-# Current Environment
-
-## Local
-
-Operating system:
-
-```text
-Windows
-```
-
-Development tools:
-
-```text
-VS Code
-Git
-Python
-```
-
-Exact versions:
-
-```text
-TODO
-```
+| Term                       | Understanding                                      | Status      |
+| -------------------------- | -------------------------------------------------- | ----------- |
+| Git repository             | Version-controlled project directory               | Learning    |
+| Staging area               | Snapshot being prepared for the next commit        | Not covered |
+| Branch / PR                | Isolated line of work / request to merge it        | Not covered |
+| Virtual environment        | Isolated Python interpreter + packages per project | Not covered |
+| Program                    | Code stored on disk                                | Not covered |
+| Process                    | Running instance of a program                      | Not covered |
+| Environment variable       | Key-value config passed to a process               | Not covered |
+| SSH                        | Encrypted remote shell protocol                    | Not covered |
+| IP / Port                  | Machine address / process endpoint on that machine | Not covered |
+| HTTP                       | Request-response protocol on top of TCP            | Not covered |
+| API                        | Interface between software systems                 | Not covered |
+| Container                  | Isolated application runtime                       | Not covered |
+| Structured output          | LLM output constrained to a schema                 | Not covered |
+| Tool calling               | LLM requests a function call; program executes it  | Not covered |
+| Agent loop                 | Repeated LLM → tool → result cycle until done    | Not covered |
+| Timeout / Retry / Fallback | Bound waiting / reattempt / backup strategy        | Not covered |
 
 ---
 
-## Remote Server
+## Environment
 
-Status:
+### Local
 
 ```text
-To be configured / confirmed
+OS      : Windows 11
+Editor  : VS Code
+Git     : 2.51.1
+Python  : 3.9.13  (kept on purpose; code must stay 3.9-compatible)
+Docker  : not installed (needed by Lesson 5)
 ```
 
-Expected environment:
+### Remote Server
 
 ```text
-Linux
-Python
-Git
-Docker
+Name      : 思睿 (research group server)
+SSH alias : myserver   (host details live only in ~/.ssh/config, never in this repo)
+To check in Lesson 2: OS, Python version, Docker availability / permission, open ports
+```
+
+### LLM
+
+```text
+Provider : 并行科技 MaaS (DeepSeek / Qwen / GLM / ERNIE / Doubao / MiniMax)
+Budget   : ~1000 RMB credit — track token cost per call
+Config   : MAAS_API_KEY / MAAS_BASE_URL / MAAS_MODEL via .env (never committed)
+To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool calling
 ```
 
 ---
 
-# Current Task
+## Next Action
 
-Complete **Lesson 0 — Project Setup**.
-
-Target repository structure:
-
-```text
-SupplyOps-Copilot/
-│
-├── README.md
-├── COURSE_STATE.md
-├── .gitignore
-│
-├── notes/
-├── data/
-├── optimizer/
-├── api/
-├── agent/
-├── tests/
-└── docker/
-```
+1. Finish the remaining Lesson 0 tasks above.
+2. Start **Lesson 1 — Local OR Engine** on branch `lesson-1-or-engine`.
 
 ---
 
-# Next Action
+## Learning Rules
 
-1. Initialize Git locally.
-2. Create repository structure.
-3. Make the first commit.
-4. Push to a remote Git repository.
-5. Start **Lesson 1 — Program, Process, Server and SSH**.
-
----
-
-# Learning Rules
-
-During this course:
-
-1. Concepts should be explained before implementation.
-2. Each lesson should connect directly to the SupplyOps project.
-3. Hands-on exercises should remain small and focused.
-4. Debugging should emphasize diagnosis rather than immediately giving the answer.
-5. Production concepts should be introduced only when the project needs them.
-6. Avoid unnecessary complexity such as multi-agent systems or Kubernetes during the MVP.
-7. `COURSE_STATE.md` is the source of truth for course progress.
+1. Concepts are explained before implementation.
+2. Every lesson connects directly to SupplyOps.
+3. Exercises stay small and focused.
+4. Debugging emphasizes diagnosis over handing out answers.
+5. Production concepts are introduced only when the project needs them.
+6. OR modeling can be brief; systems and LLM topics are covered in depth.
+7. The tutor does not write all the code during learning.
+8. No secrets (API keys, server addresses, private keys) are ever committed.
 
 ---
 
 ## Last Updated
 
-2026-10-31
-
-Current status:
-
-> Project initialization.
+2026-10-31 — Course documents unified; Lesson 0 in progress.
