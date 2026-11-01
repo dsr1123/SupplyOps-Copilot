@@ -5,9 +5,9 @@
 
 ## Current Stage
 
-**Lesson 0 — Project Setup, Git & Dev Environment** (IN PROGRESS)
+**Lesson 1 — Local OR Engine** (IN PROGRESS, branch `lesson-1-or-engine`)
 
-Next: **Lesson 1 — Local OR Engine**
+Next: **Lesson 2 — Program, Process, Linux & SSH**
 
 ---
 
@@ -15,8 +15,8 @@ Next: **Lesson 1 — Local OR Engine**
 
 | Lesson | Topic                                | Status      |
 | ------ | ------------------------------------ | ----------- |
-| 0      | Project Setup, Git & Dev Environment | IN PROGRESS |
-| 1      | Local OR Engine                      | NOT STARTED |
+| 0      | Project Setup, Git & Dev Environment | DONE        |
+| 1      | Local OR Engine                      | IN PROGRESS |
 | 2      | Program, Process, Linux & SSH        | NOT STARTED |
 | 3      | Networking & HTTP                    | NOT STARTED |
 | 4      | FastAPI Optimization Service         | NOT STARTED |
@@ -34,7 +34,7 @@ Implementation status:
 ```text
 Git repository          : DONE (GitHub remote connected)
 Dev environment         : TODO
-Local OR engine         : TODO
+Local OR engine         : IN PROGRESS
 Linux deployment        : TODO
 Optimization service    : TODO
 Docker                  : TODO
@@ -61,10 +61,23 @@ Evaluation & deployment : TODO
 - [x] Create `.venv`, add `requirements.txt`
 - [x] Add `.env.example`
 - [x] Commit and push all documents
-- [ ] First branch → PR → merge cycle
+- [x] First branch → PR → merge cycle (done together with Lesson 1)
 - [x] Write `notes/00_setup_git_env.md`
 
 Completion check: explain what `git add` / `git commit` / `git push` each change.
+
+---
+
+## Lesson 1 — Tasks
+
+- [ ] 1.1 Branch `lesson-1-or-engine`; package skeleton; `optimizer/models.py`
+- [ ] 1.2 `data/generate_data.py` + CSV data + scenarios; `optimizer/data_loader.py`
+- [ ] 1.3 `optimizer/solver.py` (OR-Tools MIP, 5 solver statuses)
+- [ ] 1.4 `optimizer/heuristic.py` (Do Nothing, Rule-Based) + `optimizer/validator.py`
+- [ ] 1.5 pytest: validator + hand-computed small case + VIP-infeasible case
+- [ ] 1.6 `optimizer/cli.py`: compare 3 methods on a scenario, JSON output
+- [ ] PR → merge into `main`
+- [ ] Write `notes/01_or_engine.md`
 
 ---
 
