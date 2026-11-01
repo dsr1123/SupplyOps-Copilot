@@ -60,9 +60,9 @@ Evaluation & deployment : TODO
 - [x] Python version decision: keep 3.9.13 (works; avoid upgrade risk)
 - [x] Create `.venv`, add `requirements.txt`
 - [x] Add `.env.example`
-- [ ] Commit and push all documents
+- [x] Commit and push all documents
 - [ ] First branch → PR → merge cycle
-- [ ] Write `notes/00_git.md`
+- [x] Write `notes/00_setup_git_env.md`
 
 Completion check: explain what `git add` / `git commit` / `git push` each change.
 
