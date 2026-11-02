@@ -1,5 +1,1 @@
-import sys
-print("CLI initialized")
-print(sys.path[0])
-from optimizer.models import GREETING
-print(GREETING)
+# Command-line entry point. Implemented in Lesson 1.6.
