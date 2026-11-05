@@ -33,7 +33,7 @@ Implementation status:
 
 ```text
 Git repository          : DONE (GitHub remote connected)
-Dev environment         : TODO
+Dev environment         : DONE (.venv, requirements.txt, pytest.ini)
 Local OR engine         : IN PROGRESS
 Linux deployment        : TODO
 Optimization service    : TODO
@@ -70,14 +70,33 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 
 ## Lesson 1 — Tasks
 
-- [ ] 1.1 Branch `lesson-1-or-engine`; package skeleton; `optimizer/models.py`
-- [ ] 1.2 `data/generate_data.py` + CSV data + scenarios; `optimizer/data_loader.py`
-- [ ] 1.3 `optimizer/solver.py` (OR-Tools MIP, 5 solver statuses)
-- [ ] 1.4 `optimizer/heuristic.py` (Do Nothing, Rule-Based) + `optimizer/validator.py`
-- [ ] 1.5 pytest: validator + hand-computed small case + VIP-infeasible case
+- [x] 1.1 Branch `lesson-1-or-engine`; package skeleton; `optimizer/models.py`
+- [x] 1.2 `data/generate_data.py` + CSV data + scenarios; `optimizer/data_loader.py`
+- [x] 1.3 `optimizer/solver.py` (OR-Tools MIP, 5 solver statuses)
+- [x] 1.4 `optimizer/heuristic.py` (Do Nothing, Rule-Based) + `optimizer/validator.py`
+- [x] 1.5 pytest: 10 tests (models, solver statuses incl. monkeypatched TIMEOUT/ERROR, validator); `pytest.ini`
 - [ ] 1.6 `optimizer/cli.py`: compare 3 methods on a scenario, JSON output
 - [ ] PR → merge into `main`
 - [ ] Write `notes/01_or_engine.md`
+
+Baseline result (scenario `supplier_delay_po1024`):
+
+| Method     | Total cost | Delayed qty | VIP violations | Valid |
+| ---------- | ---------: | ----------: | -------------: | ----- |
+| Do Nothing |     6000.0 |         380 |              1 | No    |
+| Rule-Based |     1811.8 |           0 |              0 | Yes   |
+| MIP        |     1431.3 |           0 |              0 | Yes   |
+
+Key engineering ideas covered in Lesson 1:
+
+- `Problem` / `Solution` dataclasses as the interface; solver internals never leak out
+- `solve()` never raises: failures are returned as `SolveStatus` values (`_STATUS_MAP` isolates OR-Tools codes)
+- Validator recomputes everything independently (shares no code with solver/heuristic)
+- `round()` not `int()` for MIP values; `time.perf_counter()` for durations; float compare with tolerance
+- OR-Tools `pywraplp` vs gurobipy API mapping
+- Module vs script, `python -m` / `-c`, `sys.path`, `if __name__ == "__main__"`
+- pytest: discovery, reading failure reports, `pytest.approx`, fixtures, `conftest.py`,
+  `dataclasses.replace`, `monkeypatch`, test isolation, `pytest.ini` warning filters
 
 ---
 
@@ -90,12 +109,14 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 
 ### Learning
 
-- Git project organization
+- Git project organization (Conventional Commits: `feat:` / `test:` / `docs:` / `chore:`)
 - Local vs remote development workflow
+- Python packages & modules, `python -m`, `sys.path`
+- pytest (fixtures, conftest, monkeypatch)
+- OR-Tools `pywraplp` (coming from gurobipy)
 
 ### Not Yet Covered
 
-- Python packaging, virtual environments, pytest
 - Linux processes, permissions, SSH
 - Networking, HTTP
 - FastAPI
@@ -115,7 +136,7 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 | Git repository             | Version-controlled project directory               | Learning    |
 | Staging area               | Snapshot being prepared for the next commit        | Not covered |
 | Branch / PR                | Isolated line of work / request to merge it        | Not covered |
-| Virtual environment        | Isolated Python interpreter + packages per project | Not covered |
+| Virtual environment        | Isolated Python interpreter + packages per project | Learning    |
 | Program                    | Code stored on disk                                | Not covered |
 | Process                    | Running instance of a program                      | Not covered |
 | Environment variable       | Key-value config passed to a process               | Not covered |
@@ -127,6 +148,12 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 | Structured output          | LLM output constrained to a schema                 | Not covered |
 | Tool calling               | LLM requests a function call; program executes it  | Not covered |
 | Agent loop                 | Repeated LLM → tool → result cycle until done    | Not covered |
+| Module / script            | File imported for its functions / file run directly | Learning   |
+| `python -m` / `-c`         | Run a module by name / run a code string           | Learning    |
+| Unit test / regression     | Automated check of one unit / old feature broken by new change | Learning |
+| Fixture                    | Test setup injected by parameter name (dependency injection) | Learning |
+| Mock / stub / monkeypatch  | Fake replacing a real dependency during a test     | Learning    |
+| Floating point error       | Binary floats can't represent 0.1 exactly; compare with tolerance | Learning |
 | Timeout / Retry / Fallback | Bound waiting / reattempt / backup strategy        | Not covered |
 
 ---
@@ -139,7 +166,8 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 OS      : Windows 11
 Editor  : VS Code
 Git     : 2.51.1
-Python  : 3.9.13  (kept on purpose; code must stay 3.9-compatible)
+Python  : 3.9 (.venv reports 3.9.23; system note said 3.9.13 — verify which interpreter created .venv)
+Shell   : Git Bash (MINGW64) in VS Code; activate with `source .venv/Scripts/activate`
 Docker  : not installed (needed by Lesson 5)
 ```
 
@@ -164,8 +192,9 @@ To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool ca
 
 ## Next Action
 
-1. Finish the remaining Lesson 0 tasks above.
-2. Start **Lesson 1 — Local OR Engine** on branch `lesson-1-or-engine`.
+1. Commit 1.5: `git add pytest.ini tests/` → `git commit -m "test: ..."`
+2. **1.6 `optimizer/cli.py`**: run Do Nothing / Rule-Based / MIP on a scenario, validate each, print JSON.
+3. PR `lesson-1-or-engine` → `main`; write `notes/01_or_engine.md`.
 
 ---
 
@@ -184,4 +213,4 @@ To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool ca
 
 ## Last Updated
 
-2026-10-31 — Course documents unified; Lesson 0 in progress.
+2026-11-04 — Lesson 1.1–1.5 done (loader, MIP solver, baselines, validator, pytest suite); next 1.6 CLI.
