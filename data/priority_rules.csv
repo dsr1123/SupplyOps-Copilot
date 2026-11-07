@@ -1,0 +1,5 @@
+priority,delay_penalty,allow_delay
+VIP,100,false
+HIGH,50,true
+NORMAL,10,true
+LOW,5,true

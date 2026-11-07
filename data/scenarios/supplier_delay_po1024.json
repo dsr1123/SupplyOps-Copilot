@@ -1,0 +1,10 @@
+{
+  "scenario_id": "supplier_delay_po1024",
+  "planning_date": "2026-11-01",
+  "horizon_days": 3,
+  "disruption": {
+    "type": "SUPPLIER_DELAY",
+    "po_id": "PO-1024",
+    "delay_days": 4
+  }
+}

@@ -1,0 +1,11 @@
+warehouse_id,warehouse_name,region
+WH-SH,Shanghai,East
+WH-BJ,Beijing,North
+WH-GZ,Guangzhou,South
+WH-SZ,Shenzhen,South
+WH-CD,Chengdu,Southwest
+WH-WH,Wuhan,Central
+WH-XA,Xi'an,Northwest
+WH-SY,Shenyang,Northeast
+WH-HZ,Hangzhou,East
+WH-ZZ,Zhengzhou,Central

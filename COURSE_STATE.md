@@ -5,9 +5,9 @@
 
 ## Current Stage
 
-**Lesson 0 — Project Setup, Git & Dev Environment** (IN PROGRESS)
+**Lesson 1 — Local OR Engine** (IN PROGRESS, branch `lesson-1-or-engine`)
 
-Next: **Lesson 1 — Local OR Engine**
+Next: **Lesson 2 — Program, Process, Linux & SSH**
 
 ---
 
@@ -15,8 +15,8 @@ Next: **Lesson 1 — Local OR Engine**
 
 | Lesson | Topic                                | Status      |
 | ------ | ------------------------------------ | ----------- |
-| 0      | Project Setup, Git & Dev Environment | IN PROGRESS |
-| 1      | Local OR Engine                      | NOT STARTED |
+| 0      | Project Setup, Git & Dev Environment | DONE        |
+| 1      | Local OR Engine                      | IN PROGRESS |
 | 2      | Program, Process, Linux & SSH        | NOT STARTED |
 | 3      | Networking & HTTP                    | NOT STARTED |
 | 4      | FastAPI Optimization Service         | NOT STARTED |
@@ -33,8 +33,8 @@ Implementation status:
 
 ```text
 Git repository          : DONE (GitHub remote connected)
-Dev environment         : TODO
-Local OR engine         : TODO
+Dev environment         : DONE (.venv, requirements.txt, pytest.ini)
+Local OR engine         : IN PROGRESS
 Linux deployment        : TODO
 Optimization service    : TODO
 Docker                  : TODO
@@ -61,10 +61,51 @@ Evaluation & deployment : TODO
 - [x] Create `.venv`, add `requirements.txt`
 - [x] Add `.env.example`
 - [x] Commit and push all documents
-- [ ] First branch → PR → merge cycle
+- [x] First branch → PR → merge cycle (done together with Lesson 1)
 - [x] Write `notes/00_setup_git_env.md`
 
 Completion check: explain what `git add` / `git commit` / `git push` each change.
+
+---
+
+## Lesson 1 — Tasks
+
+- [x] 1.1 Branch `lesson-1-or-engine`; package skeleton; `optimizer/models.py`
+- [x] 1.2 `data/generate_data.py` + CSV data + scenarios; `optimizer/data_loader.py`
+- [x] 1.3 `optimizer/solver.py` (OR-Tools MIP, 5 solver statuses)
+- [x] 1.4 `optimizer/heuristic.py` (Do Nothing, Rule-Based) + `optimizer/validator.py`
+- [x] 1.5 pytest: 10 tests (models, solver statuses incl. monkeypatched TIMEOUT/ERROR, validator); `pytest.ini`
+- [x] 1.6 `optimizer/cli.py`: argparse, compare 3 methods, JSON to stdout, errors to stderr, exit codes; `tests/test_cli.py` (12 tests total); `pytest.ini` `pythonpath = .`
+- [x] Push branch (`git push -u origin lesson-1-or-engine`)
+- [ ] Open PR `lesson-1-or-engine` → `main` and merge
+- [x] Write `notes/01_or_engine.md`
+
+Baseline result (scenario `supplier_delay_po1024`):
+
+| Method     | Total cost | Delayed qty | VIP violations | Valid |
+| ---------- | ---------: | ----------: | -------------: | ----- |
+| Do Nothing |     6000.0 |         380 |              1 | No    |
+| Rule-Based |     1811.8 |           0 |              0 | Yes   |
+| MIP        |     1431.3 |           0 |              0 | Yes   |
+
+Key engineering ideas covered in Lesson 1:
+
+- `Problem` / `Solution` dataclasses as the interface; solver internals never leak out
+- `solve()` never raises: failures are returned as `SolveStatus` values (`_STATUS_MAP` isolates OR-Tools codes)
+- Validator recomputes everything independently (shares no code with solver/heuristic)
+- `round()` not `int()` for MIP values; `time.perf_counter()` for durations; float compare with tolerance
+- OR-Tools `pywraplp` vs gurobipy API mapping
+- Module vs script, `python -m` / `-c`, `sys.path`, `if __name__ == "__main__"`
+- pytest: discovery, reading failure reports, `pytest.approx`, fixtures, `conftest.py`,
+  `dataclasses.replace`, `monkeypatch`, test isolation, `pytest.ini` warning filters
+- CLI: argparse (`prog`, `required`, `type=Path`), `main(argv) -> int` so tests can call it
+- JSON serialization: 6 JSON types, Enum/`Path` not serializable, output format as an explicit contract;
+  round only at the output layer; `as_posix()` for cross-platform paths
+- stdout (data) vs stderr (diagnostics), file descriptors, redirection, pipes; processes only exchange bytes
+- Exit codes: 0 OK / 1 uncaught bug / 2 usage (argparse) / 3 input error; catch only expected exceptions
+- Integration test with `capsys`; `Path(__file__)` for location-independent paths; `pytest` vs `python -m pytest` `sys.path`
+- Git: atomic commits, `commit --amend` (only before push; hash chain), `push -u` / upstream, PR
+- Network preview: git proxy on `127.0.0.1:7890`, localhost, ports (push failed while proxy was off)
 
 ---
 
@@ -77,12 +118,16 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 
 ### Learning
 
-- Git project organization
+- Git project organization (Conventional Commits: `feat:` / `test:` / `docs:` / `chore:`)
 - Local vs remote development workflow
+- Python packages & modules, `python -m`, `sys.path`
+- pytest (fixtures, conftest, monkeypatch, capsys, unit vs integration)
+- CLI design: argparse, stdout/stderr, exit codes, JSON output contracts
+- Shell redirection and pipes
+- OR-Tools `pywraplp` (coming from gurobipy)
 
 ### Not Yet Covered
 
-- Python packaging, virtual environments, pytest
 - Linux processes, permissions, SSH
 - Networking, HTTP
 - FastAPI
@@ -100,9 +145,10 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 | Term                       | Understanding                                      | Status      |
 | -------------------------- | -------------------------------------------------- | ----------- |
 | Git repository             | Version-controlled project directory               | Learning    |
-| Staging area               | Snapshot being prepared for the next commit        | Not covered |
-| Branch / PR                | Isolated line of work / request to merge it        | Not covered |
-| Virtual environment        | Isolated Python interpreter + packages per project | Not covered |
+| Staging area               | Snapshot being prepared for the next commit        | Learning    |
+| Branch / PR                | Isolated line of work / request to merge it        | Learning    |
+| Amend / upstream           | Replace last commit (new hash) / remote branch a local branch tracks | Learning |
+| Virtual environment        | Isolated Python interpreter + packages per project | Learning    |
 | Program                    | Code stored on disk                                | Not covered |
 | Process                    | Running instance of a program                      | Not covered |
 | Environment variable       | Key-value config passed to a process               | Not covered |
@@ -114,6 +160,19 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 | Structured output          | LLM output constrained to a schema                 | Not covered |
 | Tool calling               | LLM requests a function call; program executes it  | Not covered |
 | Agent loop                 | Repeated LLM → tool → result cycle until done    | Not covered |
+| Module / script            | File imported for its functions / file run directly | Learning   |
+| `python -m` / `-c`         | Run a module by name / run a code string           | Learning    |
+| Unit test / regression     | Automated check of one unit / old feature broken by new change | Learning |
+| Fixture                    | Test setup injected by parameter name (dependency injection) | Learning |
+| Mock / stub / monkeypatch  | Fake replacing a real dependency during a test     | Learning    |
+| Floating point error       | Binary floats can't represent 0.1 exactly; compare with tolerance | Learning |
+| Integration test           | Test of several units wired together (e.g. whole CLI) | Learning |
+| CLI / argv                 | Command-line entry point / argument list the shell passes in | Learning |
+| Serialization / JSON       | Turn objects into text/bytes to cross a process boundary / common text format | Learning |
+| stdout / stderr / fd       | Data channel / diagnostics channel / OS number for an open I/O channel | Learning |
+| Exit code                  | Integer a process returns to the OS; 0 = success   | Learning    |
+| Redirection / pipe         | Connect a stream to a file / to another process's stdin | Learning |
+| Proxy / localhost          | Middleman that forwards requests / 127.0.0.1, this machine | Not covered |
 | Timeout / Retry / Fallback | Bound waiting / reattempt / backup strategy        | Not covered |
 
 ---
@@ -126,7 +185,8 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 OS      : Windows 11
 Editor  : VS Code
 Git     : 2.51.1
-Python  : 3.9.13  (kept on purpose; code must stay 3.9-compatible)
+Python  : 3.9 (.venv reports 3.9.23; system note said 3.9.13 — verify which interpreter created .venv)
+Shell   : Git Bash (MINGW64) in VS Code; activate with `source .venv/Scripts/activate`
 Docker  : not installed (needed by Lesson 5)
 ```
 
@@ -151,8 +211,12 @@ To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool ca
 
 ## Next Action
 
-1. Finish the remaining Lesson 0 tasks above.
-2. Start **Lesson 1 — Local OR Engine** on branch `lesson-1-or-engine`.
+1. Commit & push `COURSE_STATE.md` + `notes/01_or_engine.md` (if the PR is already open, watch them appear in it).
+2. Open / merge PR `lesson-1-or-engine` → `main`; update local `main` (`git switch main` → `git pull`).
+3. Start **Lesson 2 — Program, Process, Linux & SSH**.
+
+Known follow-up (optional): scenario JSON with a missing key (`KeyError`) or unknown disruption type
+(`NotImplementedError`) makes the CLI crash with exit 1; should raise `DataValidationError` → exit 3.
 
 ---
 
@@ -171,4 +235,4 @@ To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool ca
 
 ## Last Updated
 
-2026-10-31 — Course documents unified; Lesson 0 in progress.
+2026-11-07 — Lesson 1.6 done (CLI + JSON output + exit codes, 12 tests), branch pushed, notes written; next: merge PR, then Lesson 2.
