@@ -75,9 +75,10 @@ Completion check: explain what `git add` / `git commit` / `git push` each change
 - [x] 1.3 `optimizer/solver.py` (OR-Tools MIP, 5 solver statuses)
 - [x] 1.4 `optimizer/heuristic.py` (Do Nothing, Rule-Based) + `optimizer/validator.py`
 - [x] 1.5 pytest: 10 tests (models, solver statuses incl. monkeypatched TIMEOUT/ERROR, validator); `pytest.ini`
-- [ ] 1.6 `optimizer/cli.py`: compare 3 methods on a scenario, JSON output
-- [ ] PR → merge into `main`
-- [ ] Write `notes/01_or_engine.md`
+- [x] 1.6 `optimizer/cli.py`: argparse, compare 3 methods, JSON to stdout, errors to stderr, exit codes; `tests/test_cli.py` (12 tests total); `pytest.ini` `pythonpath = .`
+- [x] Push branch (`git push -u origin lesson-1-or-engine`)
+- [ ] Open PR `lesson-1-or-engine` → `main` and merge
+- [x] Write `notes/01_or_engine.md`
 
 Baseline result (scenario `supplier_delay_po1024`):
 
@@ -97,6 +98,14 @@ Key engineering ideas covered in Lesson 1:
 - Module vs script, `python -m` / `-c`, `sys.path`, `if __name__ == "__main__"`
 - pytest: discovery, reading failure reports, `pytest.approx`, fixtures, `conftest.py`,
   `dataclasses.replace`, `monkeypatch`, test isolation, `pytest.ini` warning filters
+- CLI: argparse (`prog`, `required`, `type=Path`), `main(argv) -> int` so tests can call it
+- JSON serialization: 6 JSON types, Enum/`Path` not serializable, output format as an explicit contract;
+  round only at the output layer; `as_posix()` for cross-platform paths
+- stdout (data) vs stderr (diagnostics), file descriptors, redirection, pipes; processes only exchange bytes
+- Exit codes: 0 OK / 1 uncaught bug / 2 usage (argparse) / 3 input error; catch only expected exceptions
+- Integration test with `capsys`; `Path(__file__)` for location-independent paths; `pytest` vs `python -m pytest` `sys.path`
+- Git: atomic commits, `commit --amend` (only before push; hash chain), `push -u` / upstream, PR
+- Network preview: git proxy on `127.0.0.1:7890`, localhost, ports (push failed while proxy was off)
 
 ---
 
@@ -112,7 +121,9 @@ Key engineering ideas covered in Lesson 1:
 - Git project organization (Conventional Commits: `feat:` / `test:` / `docs:` / `chore:`)
 - Local vs remote development workflow
 - Python packages & modules, `python -m`, `sys.path`
-- pytest (fixtures, conftest, monkeypatch)
+- pytest (fixtures, conftest, monkeypatch, capsys, unit vs integration)
+- CLI design: argparse, stdout/stderr, exit codes, JSON output contracts
+- Shell redirection and pipes
 - OR-Tools `pywraplp` (coming from gurobipy)
 
 ### Not Yet Covered
@@ -134,8 +145,9 @@ Key engineering ideas covered in Lesson 1:
 | Term                       | Understanding                                      | Status      |
 | -------------------------- | -------------------------------------------------- | ----------- |
 | Git repository             | Version-controlled project directory               | Learning    |
-| Staging area               | Snapshot being prepared for the next commit        | Not covered |
-| Branch / PR                | Isolated line of work / request to merge it        | Not covered |
+| Staging area               | Snapshot being prepared for the next commit        | Learning    |
+| Branch / PR                | Isolated line of work / request to merge it        | Learning    |
+| Amend / upstream           | Replace last commit (new hash) / remote branch a local branch tracks | Learning |
 | Virtual environment        | Isolated Python interpreter + packages per project | Learning    |
 | Program                    | Code stored on disk                                | Not covered |
 | Process                    | Running instance of a program                      | Not covered |
@@ -154,6 +166,13 @@ Key engineering ideas covered in Lesson 1:
 | Fixture                    | Test setup injected by parameter name (dependency injection) | Learning |
 | Mock / stub / monkeypatch  | Fake replacing a real dependency during a test     | Learning    |
 | Floating point error       | Binary floats can't represent 0.1 exactly; compare with tolerance | Learning |
+| Integration test           | Test of several units wired together (e.g. whole CLI) | Learning |
+| CLI / argv                 | Command-line entry point / argument list the shell passes in | Learning |
+| Serialization / JSON       | Turn objects into text/bytes to cross a process boundary / common text format | Learning |
+| stdout / stderr / fd       | Data channel / diagnostics channel / OS number for an open I/O channel | Learning |
+| Exit code                  | Integer a process returns to the OS; 0 = success   | Learning    |
+| Redirection / pipe         | Connect a stream to a file / to another process's stdin | Learning |
+| Proxy / localhost          | Middleman that forwards requests / 127.0.0.1, this machine | Not covered |
 | Timeout / Retry / Fallback | Bound waiting / reattempt / backup strategy        | Not covered |
 
 ---
@@ -192,9 +211,12 @@ To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool ca
 
 ## Next Action
 
-1. Commit 1.5: `git add pytest.ini tests/` → `git commit -m "test: ..."`
-2. **1.6 `optimizer/cli.py`**: run Do Nothing / Rule-Based / MIP on a scenario, validate each, print JSON.
-3. PR `lesson-1-or-engine` → `main`; write `notes/01_or_engine.md`.
+1. Commit & push `COURSE_STATE.md` + `notes/01_or_engine.md` (if the PR is already open, watch them appear in it).
+2. Open / merge PR `lesson-1-or-engine` → `main`; update local `main` (`git switch main` → `git pull`).
+3. Start **Lesson 2 — Program, Process, Linux & SSH**.
+
+Known follow-up (optional): scenario JSON with a missing key (`KeyError`) or unknown disruption type
+(`NotImplementedError`) makes the CLI crash with exit 1; should raise `DataValidationError` → exit 3.
 
 ---
 
@@ -213,4 +235,4 @@ To check in Lesson 3/7: OpenAI-compatible endpoint, which models support tool ca
 
 ## Last Updated
 
-2026-11-04 — Lesson 1.1–1.5 done (loader, MIP solver, baselines, validator, pytest suite); next 1.6 CLI.
+2026-11-07 — Lesson 1.6 done (CLI + JSON output + exit codes, 12 tests), branch pushed, notes written; next: merge PR, then Lesson 2.
